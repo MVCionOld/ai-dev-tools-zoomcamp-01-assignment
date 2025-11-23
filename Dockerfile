@@ -25,11 +25,9 @@ RUN uv sync --frozen
 # Copy project
 COPY . .
 
-# Run migrations and collect static files
-RUN uv run python manage.py migrate
-
 # Expose port
 EXPOSE 8000
 
 # Run the application
-CMD ["uv", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["sh", "-c", "uv run python manage.py migrate && uv run python manage.py runserver 0.0.0.0:8000"]
+

@@ -2,10 +2,19 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
+from datetime import datetime, date
 import json
 from .models import Todo
 
 # Create your views here.
+
+def serialize_date(d):
+    """Helper to serialize date objects"""
+    if d is None:
+        return None
+    if isinstance(d, (date, datetime)):
+        return d.isoformat()
+    return str(d)
 
 def index(request):
     """Render the main TODO page"""
@@ -20,7 +29,7 @@ def todo_list(request):
         'id': todo.id,
         'title': todo.title,
         'description': todo.description,
-        'due_date': todo.due_date.isoformat() if todo.due_date else None,
+        'due_date': serialize_date(todo.due_date),
         'is_resolved': todo.is_resolved,
         'created_at': todo.created_at.isoformat(),
         'updated_at': todo.updated_at.isoformat(),
@@ -49,15 +58,13 @@ def todo_create(request):
             'id': todo.id,
             'title': todo.title,
             'description': todo.description,
-            'due_date': todo.due_date.isoformat() if todo.due_date else None,
+            'due_date': serialize_date(todo.due_date),
             'is_resolved': todo.is_resolved,
             'created_at': todo.created_at.isoformat(),
             'updated_at': todo.updated_at.isoformat(),
         }, status=201)
     except Exception as e:
-        import traceback
-        traceback.print_exc()
-        return JsonResponse({'error': str(e)}, status=400)
+        return JsonResponse({'error': 'Failed to create TODO'}, status=400)
 
 @csrf_exempt
 @require_http_methods(["PUT"])
@@ -83,15 +90,13 @@ def todo_update(request, todo_id):
             'id': todo.id,
             'title': todo.title,
             'description': todo.description,
-            'due_date': todo.due_date.isoformat() if todo.due_date else None,
+            'due_date': serialize_date(todo.due_date),
             'is_resolved': todo.is_resolved,
             'created_at': todo.created_at.isoformat(),
             'updated_at': todo.updated_at.isoformat(),
         })
     except Exception as e:
-        import traceback
-        traceback.print_exc()
-        return JsonResponse({'error': str(e)}, status=400)
+        return JsonResponse({'error': 'Failed to update TODO'}, status=400)
 
 @csrf_exempt
 @require_http_methods(["DELETE"])
@@ -102,5 +107,5 @@ def todo_delete(request, todo_id):
         todo.delete()
         return JsonResponse({'message': 'Todo deleted successfully'})
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=400)
+        return JsonResponse({'error': 'Failed to delete TODO'}, status=400)
 
