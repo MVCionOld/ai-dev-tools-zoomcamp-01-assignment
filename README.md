@@ -40,22 +40,28 @@ git clone <repository-url>
 cd ai-dev-tools-zoomcamp-01-assignment
 ```
 
-3. Install dependencies:
+3. (Optional) Set up environment variables:
+```bash
+cp .env.example .env
+# Edit .env to set your SECRET_KEY and other settings
+```
+
+4. Install dependencies:
 ```bash
 uv sync
 ```
 
-4. Run migrations:
+5. Run migrations:
 ```bash
 uv run python manage.py migrate
 ```
 
-5. Create a superuser (optional, for admin access):
+6. Create a superuser (optional, for admin access):
 ```bash
 uv run python manage.py createsuperuser
 ```
 
-6. Run the development server:
+7. Run the development server:
 ```bash
 uv run python manage.py runserver
 ```
@@ -114,10 +120,12 @@ The application provides a RESTful API:
 │   │       └── index.html
 │   ├── admin.py
 │   ├── models.py
+│   ├── tests.py         # Comprehensive test suite
 │   ├── urls.py
 │   └── views.py
 ├── manage.py
 ├── pyproject.toml       # uv project configuration
+├── .env.example         # Example environment variables
 ├── Dockerfile
 ├── docker-compose.yml
 └── README.md
@@ -137,6 +145,22 @@ uv run python manage.py test
 uv run python manage.py makemigrations
 uv run python manage.py migrate
 ```
+
+## Security
+
+The application follows Django security best practices:
+
+- **Secret Key**: Loaded from environment variable `DJANGO_SECRET_KEY` (falls back to development key for local testing)
+- **Debug Mode**: Controlled via `DEBUG` environment variable (defaults to True for development)
+- **Allowed Hosts**: Configured via `ALLOWED_HOSTS` environment variable
+- **CSRF Protection**: Disabled for API endpoints (consider using Django REST Framework tokens for production)
+
+For production deployment, ensure you:
+1. Set a strong `DJANGO_SECRET_KEY`
+2. Set `DEBUG=False`
+3. Configure `ALLOWED_HOSTS` with your domain names
+4. Use HTTPS
+5. Consider implementing proper authentication for the API endpoints
 
 ## License
 
