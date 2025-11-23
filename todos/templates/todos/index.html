@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODO App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background-color: #f7f6f3;
+            color: #37352f;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #37352f;
+        }
+
+        .new-todo-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #37352f;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e1e1e1;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #2383e2;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button {
+            background-color: #2383e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #1a6fc7;
+        }
+
+        button.secondary {
+            background-color: #e1e1e1;
+            color: #37352f;
+        }
+
+        button.secondary:hover {
+            background-color: #d1d1d1;
+        }
+
+        button.delete {
+            background-color: #eb5757;
+        }
+
+        button.delete:hover {
+            background-color: #d63e3e;
+        }
+
+        .todos-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .todo-item {
+            background: white;
+            border-radius: 8px;
+            padding: 16px 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.2s;
+        }
+
+        .todo-item:hover {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .todo-item.resolved {
+            opacity: 0.6;
+        }
+
+        .todo-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .todo-title {
+            font-size: 16px;
+            font-weight: 600;
+            flex-grow: 1;
+        }
+
+        .todo-title.resolved {
+            text-decoration: line-through;
+            color: #979797;
+        }
+
+        .todo-due-date {
+            font-size: 13px;
+            color: #787774;
+            background-color: #f7f6f3;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .todo-due-date.overdue {
+            background-color: #ffe5e5;
+            color: #eb5757;
+        }
+
+        .todo-description {
+            font-size: 14px;
+            color: #37352f;
+            margin-bottom: 10px;
+            padding-left: 30px;
+        }
+
+        .todo-actions {
+            display: flex;
+            gap: 8px;
+            padding-left: 30px;
+        }
+
+        .todo-actions button {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .edit-form {
+            padding-left: 30px;
+            margin-top: 10px;
+        }
+
+        .edit-form .form-group {
+            margin-bottom: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #979797;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 My TODOs</h1>
+        
+        <div class="new-todo-section">
+            <form id="new-todo-form">
+                <div class="form-group">
+                    <label for="title">Title *</label>
+                    <input type="text" id="title" name="title" required placeholder="What needs to be done?">
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" placeholder="Add more details..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="due_date">Due Date</label>
+                    <input type="date" id="due_date" name="due_date">
+                </div>
+                <button type="submit">Add TODO</button>
+            </form>
+        </div>
+
+        <div id="todos-container" class="todos-list">
+            <!-- TODOs will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <script>
+        // API URLs
+        const API_BASE = '/api/todos';
+
+        // Load todos on page load
+        document.addEventListener('DOMContentLoaded', loadTodos);
+
+        // Handle new todo form submission
+        document.getElementById('new-todo-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                due_date: document.getElementById('due_date').value || null,
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/create/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    // Reset form
+                    document.getElementById('new-todo-form').reset();
+                    // Reload todos
+                    loadTodos();
+                } else {
+                    alert('Failed to create TODO');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to create TODO');
+            }
+        });
+
+        // Load all todos
+        async function loadTodos() {
+            try {
+                const response = await fetch(`${API_BASE}/`);
+                const todos = await response.json();
+                
+                const container = document.getElementById('todos-container');
+                
+                if (todos.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 11l3 3L22 4"></path>
+                                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+                            </svg>
+                            <h3>No TODOs yet</h3>
+                            <p>Create your first TODO to get started!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = todos.map(todo => createTodoHTML(todo)).join('');
+            } catch (error) {
+                console.error('Error loading todos:', error);
+            }
+        }
+
+        // Create HTML for a single todo
+        function createTodoHTML(todo) {
+            const isOverdue = todo.due_date && new Date(todo.due_date) < new Date() && !todo.is_resolved;
+            const dueDateClass = isOverdue ? 'overdue' : '';
+            const resolvedClass = todo.is_resolved ? 'resolved' : '';
+            
+            return `
+                <div class="todo-item ${resolvedClass}" data-id="${todo.id}">
+                    <div class="todo-header">
+                        <input type="checkbox" class="todo-checkbox" 
+                               ${todo.is_resolved ? 'checked' : ''} 
+                               onchange="toggleResolved(${todo.id}, this.checked)">
+                        <span class="todo-title ${resolvedClass}">${escapeHtml(todo.title)}</span>
+                        ${todo.due_date ? `<span class="todo-due-date ${dueDateClass}">📅 ${formatDate(todo.due_date)}</span>` : ''}
+                    </div>
+                    ${todo.description ? `<div class="todo-description">${escapeHtml(todo.description)}</div>` : ''}
+                    <div class="todo-actions">
+                        <button class="secondary" onclick="editTodo(${todo.id})">Edit</button>
+                        <button class="delete" onclick="deleteTodo(${todo.id})">Delete</button>
+                    </div>
+                    <div id="edit-form-${todo.id}" class="edit-form" style="display: none;"></div>
+                </div>
+            `;
+        }
+
+        // Toggle todo resolved status
+        async function toggleResolved(todoId, isResolved) {
+            try {
+                const response = await fetch(`${API_BASE}/${todoId}/update/`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ is_resolved: isResolved })
+                });
+
+                if (response.ok) {
+                    loadTodos();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Edit todo
+        async function editTodo(todoId) {
+            const todoItem = document.querySelector(`[data-id="${todoId}"]`);
+            const editFormContainer = document.getElementById(`edit-form-${todoId}`);
+            
+            if (editFormContainer.style.display === 'none') {
+                // Fetch current todo data
+                const response = await fetch(`${API_BASE}/`);
+                const todos = await response.json();
+                const todo = todos.find(t => t.id === todoId);
+                
+                if (todo) {
+                    editFormContainer.innerHTML = `
+                        <form id="edit-form-content-${todoId}" onsubmit="saveTodo(event, ${todoId})">
+                            <div class="form-group">
+                                <label for="edit-title-${todoId}">Title *</label>
+                                <input type="text" id="edit-title-${todoId}" value="${escapeHtml(todo.title)}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-description-${todoId}">Description</label>
+                                <textarea id="edit-description-${todoId}">${escapeHtml(todo.description)}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-due-date-${todoId}">Due Date</label>
+                                <input type="date" id="edit-due-date-${todoId}" value="${todo.due_date || ''}">
+                            </div>
+                            <button type="submit">Save</button>
+                            <button type="button" class="secondary" onclick="cancelEdit(${todoId})">Cancel</button>
+                        </form>
+                    `;
+                    editFormContainer.style.display = 'block';
+                }
+            } else {
+                editFormContainer.style.display = 'none';
+            }
+        }
+
+        // Save edited todo
+        async function saveTodo(event, todoId) {
+            event.preventDefault();
+            
+            const formData = {
+                title: document.getElementById(`edit-title-${todoId}`).value,
+                description: document.getElementById(`edit-description-${todoId}`).value,
+                due_date: document.getElementById(`edit-due-date-${todoId}`).value || null,
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/${todoId}/update/`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    loadTodos();
+                } else {
+                    alert('Failed to update TODO');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to update TODO');
+            }
+        }
+
+        // Cancel edit
+        function cancelEdit(todoId) {
+            document.getElementById(`edit-form-${todoId}`).style.display = 'none';
+        }
+
+        // Delete todo
+        async function deleteTodo(todoId) {
+            if (!confirm('Are you sure you want to delete this TODO?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/${todoId}/delete/`, {
+                    method: 'DELETE',
+                });
+
+                if (response.ok) {
+                    loadTodos();
+                } else {
+                    alert('Failed to delete TODO');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to delete TODO');
+            }
+        }
+
+        // Helper functions
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+    </script>
+</body>
+</html>
